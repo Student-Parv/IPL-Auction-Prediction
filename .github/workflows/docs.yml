@@ -1,0 +1,34 @@
+name: Build and Deploy Documentation
+
+on:
+  push:
+    branches:
+      - main # Or your default branch
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python # If using Sphinx or MkDocs
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies # If using Sphinx or MkDocs
+        run: |
+          pip install -r requirements.txt # Or install your documentation generator
+
+      - name: Generate documentation # Example for Doxygen, adjust for your generator
+        run: |
+          # Install Doxygen if not already installed in the runner
+          sudo apt-get update && sudo apt-get install -y doxygen
+          doxygen Doxyfile
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4 # Or a similar action for deploying
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./html # Or the output directory of your generator
